@@ -23,7 +23,7 @@ public final class OutageServiceMy implements OutageService {
     private String baseUrl;
 
     @Value("${bot.pointSearch}")
-    private String pointSearch;
+    private String[] pointSearch;
 
     @Value("${bot.commonSearch}")
     private String[] commonSearch;
@@ -42,9 +42,11 @@ public final class OutageServiceMy implements OutageService {
         try {
             String body = new BodyHtml(HttpClient.newHttpClient(), baseUrl).body();
             FilteredOutages filtered = new FilteredOutagesMy(new FoundOutagesFromWeb(body).outages());
-            List<Outage> filteredByText = filtered.filteredByStringInHeader(pointSearch);
-            LOGGER.info("Found {} outages by text {}.", filteredByText.size(), pointSearch);
-            sendOutage(filteredByText);
+            for (String point : pointSearch) {
+                List<Outage> filteredByText = filtered.filteredByStringInHeader(point);
+                LOGGER.info("Found {} outages by text {}.", filteredByText.size(), point);
+                sendOutage(filteredByText);
+            }
             List<Outage> filteredByRadius = filtered.filteredByRadius(x, y, r);
             LOGGER.info("Found {} outages by radius {}.", filteredByRadius.size(), r);
             sendOutage(filteredByRadius);
