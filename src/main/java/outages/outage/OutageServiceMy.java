@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import outages.html.BodyHtml;
+import outages.outage.creator.FoundOutagesCreator;
+import outages.outage.filtered.FilteredOutages;
+import outages.outage.filtered.FilteredOutagesMy;
 import outages.pojo.Outage;
 
 import java.net.http.HttpClient;
@@ -19,11 +22,14 @@ public final class OutageServiceMy implements OutageService {
     @Autowired
     ProcessResult processResult;
 
+    @Autowired
+    private FoundOutagesCreator fCreator;
+
     @Value("${bot.url}")
     private String baseUrl;
 
     @Value("${bot.pointSearch}")
-    private String[] pointSearch;
+    private String pointSearch;
 
     @Value("${bot.commonSearch}")
     private String[] commonSearch;
@@ -41,8 +47,8 @@ public final class OutageServiceMy implements OutageService {
     public void checkNearBy(Long[] chatIds) {
         try {
             String body = new BodyHtml(HttpClient.newHttpClient(), baseUrl).body();
-            FilteredOutages filtered = new FilteredOutagesMy(new FoundOutagesFromWeb(body).outages());
-            for (String point : pointSearch) {
+            FilteredOutages filtered = new FilteredOutagesMy(fCreator.create(body).outages());
+            for (String point : splitByComaConsideringQuotes(pointSearch)) {
                 List<Outage> filteredByText = filtered.filteredByStringInHeader(point);
                 LOGGER.info("Found {} outages by text {}.", filteredByText.size(), point);
                 sendOutage(filteredByText);
@@ -55,12 +61,27 @@ public final class OutageServiceMy implements OutageService {
         }
     }
 
+
+
+    private String[] splitByComaConsideringQuotes(String pointSearch) {
+        String[] parts = pointSearch.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+        for (int i = 0; i < parts.length; i++) {
+            String p = parts[i].trim();
+            if (p.length() >= 2 && (p.startsWith("\"") && p.endsWith("\""))) {
+                parts[i] = p.substring(1, p.length() - 1);
+            } else {
+                parts[i] = p;
+            }
+        }
+        return parts;
+    }
+
     @Override
     public void checkSizeAround(Long[] chatIds) {
         try {
             String body = new BodyHtml(HttpClient.newHttpClient(), baseUrl).body();
             for (String search : commonSearch) {
-                FilteredOutages filtered = new FilteredOutagesMy(new FoundOutagesFromWeb(body).outages());
+                FilteredOutages filtered = new FilteredOutagesMy(fCreator.create(body).outages());
                 int filteredByTextSize = filtered.filteredByStringInHeader(search).size();
                 LOGGER.info("Found {} outages by text {}.", filteredByTextSize, search);
                 processResult.processPlainText(String.format("Отключений в %s: %s", search, filteredByTextSize));

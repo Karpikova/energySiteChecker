@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import outages.bot.SendingMessageTelegramLongPollingBot;
 import outages.pojo.Outage;
+import outages.pojo.OutageV1;
 import outages.service.SentNotificationService;
 
 import java.util.UUID;
@@ -25,7 +26,7 @@ public final class ProcessResultMy implements ProcessResult {
 
     @Override
     public void processOutage(Outage outage) {
-        UUID outageId = outage.getId();
+        UUID outageId = outage.id();
         for (Long chatId : chatIds) {
             if (!service.existsByIdChatIdAndIdOutageId(chatId, outageId)) {
                 if (bot.sendMessage(outage, chatId)) {

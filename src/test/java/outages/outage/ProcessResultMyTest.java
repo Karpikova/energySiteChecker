@@ -19,7 +19,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import outages.bot.SendingMessageTelegramLongPollingBot;
 import outages.model.SentNotification;
 import outages.model.SentNotificationId;
-import outages.pojo.Outage;
+import outages.pojo.OutageV1;
 import outages.repository.SentNotificationRepository;
 import outages.sceduled.ScheduledCheck;
 
@@ -73,7 +73,7 @@ public class ProcessResultMyTest {
 
     @BeforeEach
     public void setUp() {
-        Mockito.when(bot.sendMessage((Outage) any(), any())).thenReturn(true);
+        Mockito.when(bot.sendMessage((OutageV1) any(), any())).thenReturn(true);
 
         SentNotification notification1 = new SentNotification();
         notification1.setId(new SentNotificationId(myChatId, uuid1));
@@ -91,18 +91,18 @@ public class ProcessResultMyTest {
 
     @Test
     public void processOutageTest() {
-        Outage outage1 = new Outage.Builder()
+        OutageV1 outageV11 = new OutageV1.Builder()
                 .id(uuid1)
                 .build();
-        processResult.processOutage(outage1);
-        Mockito.verify(bot, Mockito.times(0)).sendMessage(any(Outage.class), any(Long.class));
+        processResult.processOutage(outageV11);
+        Mockito.verify(bot, Mockito.times(0)).sendMessage(any(OutageV1.class), any(Long.class));
         Assert.assertEquals(3, repository.count());
 
-        Outage outage2 = new Outage.Builder()
+        OutageV1 outageV12 = new OutageV1.Builder()
                 .id(uuid2)
                 .build();
-        processResult.processOutage(outage2);
-        Mockito.verify(bot, Mockito.times(1)).sendMessage(any(Outage.class), any(Long.class));
+        processResult.processOutage(outageV12);
+        Mockito.verify(bot, Mockito.times(1)).sendMessage(any(OutageV1.class), any(Long.class));
         Assert.assertEquals(4, repository.count());
 
         long countById = em.createQuery("SELECT COUNT(s) FROM SentNotification s WHERE s.id.chatId = :chatId",

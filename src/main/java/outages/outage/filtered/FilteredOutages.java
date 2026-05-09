@@ -1,4 +1,4 @@
-package outages.outage;
+package outages.outage.filtered;
 
 import outages.pojo.Outage;
 import java.util.List;
