@@ -20,4 +20,7 @@ public final class SentNotificationId implements Serializable {
 
     @Column(name = "outage_id")
     private UUID outageId;
+
+    @Column(name = "is_cancelling")
+    private Boolean isCancelling;
 }

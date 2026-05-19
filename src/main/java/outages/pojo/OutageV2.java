@@ -1,6 +1,7 @@
 package outages.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 import java.util.UUID;
@@ -9,6 +10,9 @@ import java.util.UUID;
 @Getter
 public class OutageV2 implements Outage {
     private Geodata geodata;
+
+    @JsonProperty("isсancelling")
+    private Boolean isCancelling;
 
     @Override
     public Boolean valid() {
@@ -19,6 +23,7 @@ public class OutageV2 implements Outage {
     public String printableView() {
         return geodata.getType() + System.lineSeparator() +
                 geodata.getId() + System.lineSeparator() +
+                (isCancelling ? "ОТМЕНА " : "") +
                 geodata.getProperties().getBalloonContentHeader() + System.lineSeparator() +
                 geodata.getProperties().getBalloonContentBody() + System.lineSeparator() +
                 geodata.getProperties().getBalloonContentFooter() + System.lineSeparator();
@@ -32,6 +37,11 @@ public class OutageV2 implements Outage {
     @Override
     public Geometry geometry() {
         return geodata.getGeometry();
+    }
+
+    @Override
+    public Boolean isCancelled() {
+        return isCancelling;
     }
 
     @Override

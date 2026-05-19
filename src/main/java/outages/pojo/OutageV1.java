@@ -39,6 +39,11 @@ public class OutageV1 implements Outage {
     }
 
     @Override
+    public Boolean isCancelled() {
+        return false;
+    }
+
+    @Override
     public UUID id() {
         return id;
     }

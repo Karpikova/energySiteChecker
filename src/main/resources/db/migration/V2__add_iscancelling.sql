@@ -1,0 +1,2 @@
+ALTER TABLE sent_notifications
+ADD COLUMN is_cancelling BOOLEAN NOT NULL DEFAULT FALSE;

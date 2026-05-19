@@ -20,8 +20,8 @@ public class SentNotificationServiceMy implements SentNotificationService {
     private SentNotificationRepository repository;
 
     @Override
-    public void markAsSent(Long chatId, UUID outageId) {
-        SentNotificationId id = new SentNotificationId(chatId, outageId);
+    public void markAsSent(Long chatId, UUID outageId, Boolean isCancelling) {
+        SentNotificationId id = new SentNotificationId(chatId, outageId, isCancelling);
         SentNotification notification = new SentNotification();
         notification.setId(id);
         repository.save(notification);
@@ -29,7 +29,7 @@ public class SentNotificationServiceMy implements SentNotificationService {
     }
 
     @Override
-    public boolean existsByIdChatIdAndIdOutageId(Long chatId, UUID outageId) {
-        return repository.existsByIdChatIdAndIdOutageId(chatId, outageId);
+    public boolean existsByIdChatIdAndIdOutageId(Long chatId, UUID outageId, Boolean isCancelling) {
+        return repository.existsByIdChatIdAndIdOutageIdAndIsCancelling(chatId, outageId, isCancelling);
     }
 }

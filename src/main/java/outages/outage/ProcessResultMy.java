@@ -27,10 +27,11 @@ public final class ProcessResultMy implements ProcessResult {
     @Override
     public void processOutage(Outage outage) {
         UUID outageId = outage.id();
+        Boolean isCancelling = outage.isCancelled();
         for (Long chatId : chatIds) {
-            if (!service.existsByIdChatIdAndIdOutageId(chatId, outageId)) {
+            if (!service.existsByIdChatIdAndIdOutageId(chatId, outageId, isCancelling)) {
                 if (bot.sendMessage(outage, chatId)) {
-                    service.markAsSent(chatId, outageId);
+                    service.markAsSent(chatId, outageId, isCancelling);
                 }
             }
         }
