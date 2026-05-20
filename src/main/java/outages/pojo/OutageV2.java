@@ -11,7 +11,7 @@ import java.util.UUID;
 public class OutageV2 implements Outage {
     private Geodata geodata;
 
-    @JsonProperty("isсancelling")
+    @JsonProperty("iscancelling")
     private Boolean isCancelling;
 
     @Override
