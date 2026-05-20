@@ -61,21 +61,6 @@ public final class OutageServiceMy implements OutageService {
         }
     }
 
-
-
-    private String[] splitByComaConsideringQuotes(String pointSearch) {
-        String[] parts = pointSearch.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-        for (int i = 0; i < parts.length; i++) {
-            String p = parts[i].trim();
-            if (p.length() >= 2 && (p.startsWith("\"") && p.endsWith("\""))) {
-                parts[i] = p.substring(1, p.length() - 1);
-            } else {
-                parts[i] = p;
-            }
-        }
-        return parts;
-    }
-
     @Override
     public void checkSizeAround(Long[] chatIds) {
         try {
@@ -89,6 +74,19 @@ public final class OutageServiceMy implements OutageService {
         } catch (Exception e) {
             LOGGER.error("Ошибка верхнего уровня: ", e);
         }
+    }
+
+    private String[] splitByComaConsideringQuotes(String pointSearch) {
+        String[] parts = pointSearch.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+        for (int i = 0; i < parts.length; i++) {
+            String p = parts[i].trim();
+            if (p.length() >= 2 && (p.startsWith("\"") && p.endsWith("\""))) {
+                parts[i] = p.substring(1, p.length() - 1);
+            } else {
+                parts[i] = p;
+            }
+        }
+        return parts;
     }
 
     private void sendOutage(List<Outage> outages) {

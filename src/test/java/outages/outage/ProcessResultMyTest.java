@@ -76,15 +76,15 @@ public class ProcessResultMyTest {
         Mockito.when(bot.sendMessage((OutageV1) any(), any())).thenReturn(true);
 
         SentNotification notification1 = new SentNotification();
-        notification1.setId(new SentNotificationId(myChatId, uuid1));
+        notification1.setId(new SentNotificationId(myChatId, uuid1, false));
         repository.save(notification1);
 
         SentNotification notification2 = new SentNotification();
-        notification2.setId(new SentNotificationId(myChatId, uuid2));
+        notification2.setId(new SentNotificationId(myChatId, uuid2, false));
         repository.save(notification2);
 
         SentNotification notification3 = new SentNotification();
-        notification3.setId(new SentNotificationId(husbandsChatId, uuid1));
+        notification3.setId(new SentNotificationId(husbandsChatId, uuid1, false));
         repository.save(notification3);
 
     }
