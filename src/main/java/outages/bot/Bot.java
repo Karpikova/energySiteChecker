@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import outages.outage.OutageService;
@@ -57,7 +58,9 @@ public final class Bot extends TelegramLongPollingBot implements SendingMessageT
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage()) {
-            Long[] chatId = {update.getMessage().getChatId()};
+            Message message = update.getMessage();
+            System.out.println("Пришло: " + message);
+            Long[] chatId = {message.getChatId()};
             os.checkNearBy(chatId);
         }
     }
