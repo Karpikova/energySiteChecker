@@ -15,6 +15,9 @@ public final class ScheduledCheckEnergy implements ScheduledCheck {
     @Value("${bot.chatIds}")
     private Long[] chatIds;
 
+    @Value("${bot.limitToText}")
+    private int limitToText;
+
     @Override
     @Scheduled(fixedRateString = "${bot.scheduler.interval}")
     public void scheduledCheck() {
@@ -24,6 +27,6 @@ public final class ScheduledCheckEnergy implements ScheduledCheck {
     @Scheduled(fixedRateString = "${bot.scheduler.intervalCommon}")
     @Override
     public void scheduledCheckCommon() {
-        os.checkSizeAround(chatIds);
+        os.checkSizeAround(chatIds, limitToText);
     }
 }

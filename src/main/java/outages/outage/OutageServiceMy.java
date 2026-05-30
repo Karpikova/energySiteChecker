@@ -62,14 +62,16 @@ public final class OutageServiceMy implements OutageService {
     }
 
     @Override
-    public void checkSizeAround(Long[] chatIds) {
+    public void checkSizeAround(Long[] chatIds, int limitToText) {
         try {
             String body = new BodyHtml(HttpClient.newHttpClient(), baseUrl).body();
             for (String search : commonSearch) {
                 FilteredOutages filtered = new FilteredOutagesMy(fCreator.create(body).outages());
                 int filteredByTextSize = filtered.filteredByStringInHeader(search).size();
                 LOGGER.info("Found {} outages by text {}.", filteredByTextSize, search);
-                processResult.processPlainText(String.format("Отключений в %s: %s", search, filteredByTextSize));
+                if (filteredByTextSize > limitToText) {
+                    processResult.processPlainText(String.format("Отключений в %s: %s", search, filteredByTextSize));
+                }
             }
         } catch (Exception e) {
             LOGGER.error("Ошибка верхнего уровня: ", e);
