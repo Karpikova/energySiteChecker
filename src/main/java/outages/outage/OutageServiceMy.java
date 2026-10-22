@@ -34,6 +34,9 @@ public final class OutageServiceMy implements OutageService {
     @Value("${bot.commonSearch}")
     private String[] commonSearch;
 
+    @Value("${bot.searchByRadius}")
+    private boolean searchByRadius;    
+
     @Value("${bot.x}")
     private Float x;
 
@@ -48,16 +51,26 @@ public final class OutageServiceMy implements OutageService {
         try {
             String body = new BodyHtml(HttpClient.newHttpClient(), baseUrl).body();
             FilteredOutages filtered = new FilteredOutagesMy(fCreator.create(body).outages());
-            for (String point : splitByComaConsideringQuotes(pointSearch)) {
-                List<Outage> filteredByText = filtered.filteredByStringInHeader(point);
-                LOGGER.info("Found {} outages by text {}.", filteredByText.size(), point);
-                sendOutage(filteredByText);
-            }
+            sendByText(filtered);
+            sendByRadius(filtered);
+        } catch (Exception e) {
+            LOGGER.error("Ошибка верхнего уровня: ", e);
+        }
+    }
+
+    private void sendByText(FilteredOutages filtered) {
+        for (String point : splitByComaConsideringQuotes(pointSearch)) {
+            List<Outage> filteredByText = filtered.filteredByStringInHeader(point);
+            LOGGER.info("Found {} outages by text {}.", filteredByText.size(), point);
+            sendOutage(filteredByText);
+        }
+    }
+
+    private void sendByRadius(FilteredOutages filtered) {
+        if (searchByRadius) {
             List<Outage> filteredByRadius = filtered.filteredByRadius(x, y, r);
             LOGGER.info("Found {} outages by radius {}.", filteredByRadius.size(), r);
             sendOutage(filteredByRadius);
-        } catch (Exception e) {
-            LOGGER.error("Ошибка верхнего уровня: ", e);
         }
     }
 
